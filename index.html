@@ -202,8 +202,6 @@
 
       .choice-btn.no {
         position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
         background: rgba(255, 255, 255, 0.78);
         color: var(--blue-dark);
         border: 1px solid rgba(92, 142, 245, 0.12);
@@ -212,6 +210,11 @@
 
       .choice-btn.no:hover {
         background: rgba(255, 255, 255, 0.95);
+      }
+
+      .choice-btn.no.escaping {
+        position: fixed;
+        pointer-events: none;
       }
 
       .response {
@@ -226,6 +229,16 @@
 
       .response.show {
         opacity: 1;
+      }
+
+      .hint {
+        margin-top: 12px;
+        min-height: 24px;
+        font-size: 0.95rem;
+        color: var(--blue);
+        font-style: italic;
+        opacity: 0.8;
+        transition: all 0.3s ease;
       }
 
       .final-line {
@@ -299,11 +312,12 @@
         <h2>Beni affeder misin?</h2>
         <p>Birlikte çoook mutlu olalım.</p>
 
-        <div class="choice-wrap" aria-label="affection choice area">
+        <div class="choice-wrap" id="buttonGame" aria-label="affection choice area">
           <button id="yesBtn" class="choice-btn yes" type="button">Evet</button>
           <button id="noBtn" class="choice-btn no" type="button">Hayır</button>
         </div>
 
+        <div id="hint" class="hint"></div>
         <div id="response" class="response">Teşekkür ederim, seni çok seviyorum.</div>
       </section>
 
@@ -315,27 +329,135 @@
     <script>
       const yesBtn = document.getElementById('yesBtn');
       const noBtn = document.getElementById('noBtn');
+      const gameBox = document.getElementById('buttonGame');
+      const hint = document.getElementById('hint');
       const response = document.getElementById('response');
-      const wrap = document.querySelector('.choice-wrap');
+      let celebrated = false;
+      let dodges = 0;
+      let isMoving = false;
 
-      function moveNoButton() {
-        const wrapRect = wrap.getBoundingClientRect();
-        const maxX = Math.max(0, wrapRect.width - 120);
-        const maxY = Math.max(0, wrapRect.height - 48);
-        const x = Math.random() * maxX;
-        const y = Math.random() * maxY;
-
-        noBtn.style.left = `${x}px`;
-        noBtn.style.top = `${y}px`;
-        noBtn.style.transform = 'none';
+      // Initialize button position next to Evet button
+      function initializeButtonPosition() {
+        const yesBtnRect = yesBtn.getBoundingClientRect();
+        const gameBoxRect = gameBox.getBoundingClientRect();
+        const yesCenterX = yesBtnRect.left - gameBoxRect.left + yesBtnRect.width / 2;
+        const yesCenterY = yesBtnRect.top - gameBoxRect.top + yesBtnRect.height / 2;
+        
+        // Position slightly to the right of Evet button
+        noBtn.style.left = (yesCenterX + 120) + 'px';
+        noBtn.style.top = (yesCenterY - noBtn.offsetHeight / 2) + 'px';
       }
 
-      noBtn.addEventListener('mouseenter', moveNoButton);
-      noBtn.addEventListener('click', moveNoButton);
+      // Initialize when page loads
+      window.addEventListener('load', initializeButtonPosition);
+      setTimeout(initializeButtonPosition, 100);
+
+      const hints = [
+        'yakaladın sanma 😏',
+        'olmaz öyle kolay',
+        'biraz daha dene',
+        'hop, kaçtı yine',
+        'hayır bugün burada değil',
+        'sadece "evet" var, kusura bakma',
+        'pes etsen mi acaba 😄'
+      ];
+
+      function dodgeNo() {
+        const gw = gameBox.clientWidth;
+        const gh = gameBox.clientHeight;
+        const bw = noBtn.offsetWidth;
+        const bh = noBtn.offsetHeight;
+        
+        const startX = parseFloat(noBtn.style.left) || 0;
+        const startY = parseFloat(noBtn.style.top) || 0;
+        
+        // Get Evet button center position relative to gameBox
+        const yesBtnRect = yesBtn.getBoundingClientRect();
+        const gameBoxRect = gameBox.getBoundingClientRect();
+        const yesCenterX = yesBtnRect.left - gameBoxRect.left + yesBtnRect.width / 2;
+        const yesCenterY = yesBtnRect.top - gameBoxRect.top + yesBtnRect.height / 2;
+        
+        // Random angle and distance around Evet button
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 90 + Math.random() * 50;
+        
+        const x = Math.max(0, Math.min(yesCenterX + Math.cos(angle) * distance, gw - bw));
+        const y = Math.max(0, Math.min(yesCenterY + Math.sin(angle) * distance, gh - bh));
+        
+        let progress = 0;
+        const duration = 250;
+        const startTime = Date.now();
+
+        function animate() {
+          const elapsed = Date.now() - startTime;
+          progress = Math.min(elapsed / duration, 1);
+
+          const currentX = startX + (x - startX) * progress;
+          const currentY = startY + (y - startY) * progress;
+
+          noBtn.style.left = currentX + 'px';
+          noBtn.style.top = currentY + 'px';
+          noBtn.style.transform = 'none';
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            isMoving = false;
+          }
+        }
+
+        animate();
+        dodges++;
+        hint.textContent = hints[Math.min(dodges - 1, hints.length - 1)];
+      }
+
+      // Track mouse movement and move button away when mouse gets close
+      document.addEventListener('mousemove', function(e) {
+        if (isMoving || dodges === 0) return;
+
+        const noBtnRect = noBtn.getBoundingClientRect();
+        const noBtnCenterX = noBtnRect.left + noBtnRect.width / 2;
+        const noBtnCenterY = noBtnRect.top + noBtnRect.height / 2;
+
+        const distanceX = e.clientX - noBtnCenterX;
+        const distanceY = e.clientY - noBtnCenterY;
+        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+        if (distance < 120) {
+          isMoving = true;
+          dodgeNo();
+        }
+      });
+
+      noBtn.addEventListener('mouseenter', function() {
+        if (isMoving) return;
+        isMoving = true;
+        dodgeNo();
+      });
+      
+      noBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (isMoving) return;
+        isMoving = true;
+        dodgeNo();
+      });
 
       yesBtn.addEventListener('click', function () {
         response.classList.add('show');
         response.textContent = 'Teşekkür ederim, seni çok seviyorum.';
+        
+        // Scroll to top smoothly
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+        
+        // Reset button position to next to Evet after a short delay
+        setTimeout(function() {
+          initializeButtonPosition();
+          dodges = 0;
+          hint.textContent = '';
+        }, 500);
       });
     </script>
   </body>
