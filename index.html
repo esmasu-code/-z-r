@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sevgilim için</title>
+    <style>
+      :root {
+        --sky: #dfeeff;
+        --sky-deep: #b7d7ff;
+        --blue: #5c8ef5;
+        --blue-dark: #2f4d96;
+        --white: #f9fbff;
+        --soft-white: #edf4ff;
+        --brown: #8d614a;
+        --brown-deep: #5a3828;
+        --pink: #ffeff5;
+        --shadow: rgba(47, 77, 150, 0.18);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(180deg, #edf6ff 0%, #dfeeff 35%, #cfe2ff 100%);
+        color: var(--blue-dark);
+        overflow-x: hidden;
+      }
+
+      .page {
+        position: relative;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+      }
+
+      .flower-layer {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .decor-flower {
+        position: absolute;
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        opacity: 0.38;
+        filter: blur(0.6px) saturate(0.65);
+        background:
+          radial-gradient(circle at center, rgba(255,255,255,0.85) 0 12%, transparent 15%),
+          radial-gradient(circle at 50% 18%, rgba(255, 224, 235, 0.9) 0 18%, transparent 19%),
+          radial-gradient(circle at 72% 35%, rgba(255, 224, 235, 0.85) 0 18%, transparent 19%),
+          radial-gradient(circle at 50% 82%, rgba(255, 224, 235, 0.85) 0 18%, transparent 19%),
+          radial-gradient(circle at 28% 35%, rgba(255, 224, 235, 0.85) 0 18%, transparent 19%),
+          radial-gradient(circle at center, rgba(255, 200, 220, 0.6) 0 22%, rgba(255, 255, 255, 0) 23%);
+        box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.25);
+      }
+
+      .f1 { top: 8%; left: 6%; transform: rotate(-10deg); }
+      .f2 { top: 12%; right: 9%; transform: rotate(12deg); }
+      .f3 { top: 30%; left: 2%; transform: rotate(-20deg); }
+      .f4 { top: 38%; right: 4%; transform: rotate(20deg); }
+      .f5 { top: 54%; left: 7%; transform: rotate(-12deg); }
+      .f6 { top: 62%; right: 8%; transform: rotate(18deg); }
+      .f7 { top: 78%; left: 3%; transform: rotate(-8deg); }
+      .f8 { top: 82%; right: 11%; transform: rotate(10deg); }
+      .f9 { top: 26%; left: 48%; transform: rotate(-6deg); }
+      .f10 { top: 70%; left: 50%; transform: rotate(8deg); }
+
+      .top-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.52);
+        border: 1px solid rgba(92, 142, 245, 0.18);
+        backdrop-filter: blur(10px);
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: var(--blue-dark);
+        box-shadow: 0 10px 25px rgba(92, 142, 245, 0.08);
+      }
+
+      .heart {
+        color: #ff81a7;
+        font-size: 1.2rem;
+      }
+
+      .hero {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 18px;
+      }
+
+      .hero-card {
+        position: relative;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        box-shadow: none;
+      }
+
+      .card-art {
+        width: min(100%, 520px);
+        margin: 0 auto;
+        display: block;
+      }
+
+      @keyframes floaty {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+      }
+
+      .message {
+        margin-top: 42px;
+        background: rgba(255, 255, 255, 0.52);
+        border: 1px solid rgba(92, 142, 245, 0.12);
+        border-radius: 30px;
+        padding: 30px 30px 26px;
+        box-shadow: 0 18px 40px rgba(92, 142, 245, 0.08);
+      }
+
+      .message p {
+        font-size: 1.1rem;
+        line-height: 2;
+        margin: 0 0 18px;
+        color: rgba(47, 77, 150, 0.9);
+      }
+
+      .message p strong {
+        color: var(--blue-dark);
+      }
+
+      .message .highlight {
+        display: inline-block;
+        background: linear-gradient(135deg, rgba(92, 142, 245, 0.12), rgba(255, 255, 255, 0.7));
+        border: 1px solid rgba(92, 142, 245, 0.12);
+        border-radius: 14px;
+        padding: 8px 12px;
+        margin: 2px 0;
+      }
+
+      .ask-box {
+        margin-top: 36px;
+        text-align: center;
+        padding: 28px 18px 12px;
+      }
+
+      .ask-box h2 {
+        margin: 0 0 12px;
+        font-size: clamp(1.8rem, 3vw, 3rem);
+        color: var(--blue-dark);
+      }
+
+      .ask-box p {
+        margin: 0 0 22px;
+        color: rgba(47, 77, 150, 0.8);
+        font-size: 1.04rem;
+      }
+
+      .choice-wrap {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 110px;
+        gap: 16px;
+        margin-top: 12px;
+      }
+
+      .choice-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 14px 30px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .choice-btn.yes {
+        background: linear-gradient(135deg, #8bb6ff, #5d84ee);
+        color: white;
+        box-shadow: 0 16px 26px rgba(92, 142, 245, 0.26);
+      }
+
+      .choice-btn.yes:hover {
+        transform: translateY(-2px) scale(1.04);
+      }
+
+      .choice-btn.no {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.78);
+        color: var(--blue-dark);
+        border: 1px solid rgba(92, 142, 245, 0.12);
+        box-shadow: 0 10px 18px rgba(92, 142, 245, 0.08);
+      }
+
+      .choice-btn.no:hover {
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .response {
+        margin-top: 18px;
+        min-height: 30px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--brown);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .response.show {
+        opacity: 1;
+      }
+
+      .final-line {
+        margin-top: 34px;
+        text-align: center;
+        font-size: clamp(1.5rem, 3vw, 2.7rem);
+        line-height: 1.5;
+        font-weight: 800;
+        color: var(--blue-dark);
+      }
+
+      .final-line .red-heart {
+        color: #ff4d6d;
+        display: inline-block;
+        margin: 0 6px;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.15); }
+      }
+
+      @media (max-width: 820px) {
+        .hero {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .subtitle {
+          margin: 0 auto;
+        }
+
+        .promise-box {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <section class="hero">
+        <div class="hero-card">
+          <img class="card-art" src="images.jpg" alt="I love you illustration" />
+        </div>
+      </section>
+
+      <section class="message">
+        <p>
+          <strong>Aşkitom,<strong> yaptığım hataların, yanlışları anladım ve o karaktersiz iğrenç anlarımdan
+          çok utanıyorum. Benim için şu saatten sonra yapılması gereken senin yanında kendi hatalarımı görüp
+          düzeltebilmem. Sana bir daha aynı yanlışları yaşatmayacağım. Seninle birlikte
+          her şey daha anlamlı, daha güzel ve daha gerçek.
+        </p>
+
+        <p>
+          Biz beraber çabaladığımız sürece her şey daha
+          iyiye gidecek aynı en başında yaptığımız gibi. Bunu sadece sözle değil, davranışlarımla da göstereceğim. 
+          Değiştiğimi o yaşananların çocukça boş bi heyacan arayışı olduğunu sana göstereceğim. Ve bunu sana göstermek için elimden geleni yapacağım
+        </p>
+
+        <p>
+          Her şeyin en başta nasıl da güzel olduğunu bilerek, o anlara geri dönmeyi çok istiyorum.
+          İzin ver bunu bizim için yapabileyim. Senden sadece bir şans istiyorum. O iğrenç mesajları okuyana kadar nasıl kafanda bir 
+          şeyler değişmeye başladıysa yine değişebilir. Ben en başında nasıl kendimi sana sevdirdiysem yine sevdirebilirim.
+          Yeter ki denememize izin ver.
+        </p>
+      </section>
+
+      <section class="ask-box">
+        <h2>Beni affeder misin?</h2>
+        <p>Birlikte çoook mutlu olalım.</p>
+
+        <div class="choice-wrap" aria-label="affection choice area">
+          <button id="yesBtn" class="choice-btn yes" type="button">Evet</button>
+          <button id="noBtn" class="choice-btn no" type="button">Hayır</button>
+        </div>
+
+        <div id="response" class="response">Teşekkür ederim, seni çok seviyorum.</div>
+      </section>
+
+      <div class="final-line">
+        Seni çok seviyorum <span class="red-heart">❤</span>
+      </div>
+    </div>
+
+    <script>
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+      const response = document.getElementById('response');
+      const wrap = document.querySelector('.choice-wrap');
+
+      function moveNoButton() {
+        const wrapRect = wrap.getBoundingClientRect();
+        const maxX = Math.max(0, wrapRect.width - 120);
+        const maxY = Math.max(0, wrapRect.height - 48);
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+        noBtn.style.transform = 'none';
+      }
+
+      noBtn.addEventListener('mouseenter', moveNoButton);
+      noBtn.addEventListener('click', moveNoButton);
+
+      yesBtn.addEventListener('click', function () {
+        response.classList.add('show');
+        response.textContent = 'Teşekkür ederim, seni çok seviyorum.';
+      });
+    </script>
+  </body>
+</html>
